@@ -1,0 +1,41 @@
+{
+  "name": "RNWasmImplementation",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "android:build": "react-native run-android --variant=release",
+    "android:apk": "cd android &&  ./gradlew assembleRelease && cd .. && open android/app/build/outputs/apk/release/ ",
+    "android:aab": "npm run increment:android && cd android && ./gradlew bundleRelease && cd .. && open android/app/build/outputs/bundle/release/ ",
+    "ios": "REACT_NATIVE_CRYPTO_ASM=1 react-native run-ios",
+    "ios:build": "REACT_NATIVE_CRYPTO_ASM=1 react-native run-ios --configuration=release",
+    "ios:release": "cd ios && fastlane beta && cd ..",
+    "increment:android": "react-native-version -b -t android",
+    "start": "REACT_NATIVE_CRYPTO_ASM=1 CRYPTO_ASM=1 NODE_OPTIONS=--max_old_space_size=8192 npx react-native start --verbose",
+    "start:dev": "REACT_DEBUGGER=\"open -g 'rndebugger://set-debugger-loc?port=8081' ||\"  CRYPTO_ASM=1 react-native start",
+    "test": "jest",
+    "clean:perfect": "watchman watch-del-all && rm package-lock.json && rm -rf node_modules && rm -rf $TMPDIR/metro-* && rm -rf $TMPDIR/haste-map-* && NPM_CONFIG_CRYPTO_ASM=1 npm install",
+    "postinstall": "npx jetify &&  npx rn-nodeify --install --hack"
+  },
+  "dependencies": {
+    "@polkadot/util": "^3.3.1",
+    "@quantik-solutions/numio-zksync": "0.0.2",
+    "node-libs-react-native": "^1.2.0",
+    "react": "16.13.1",
+    "react-native": "0.63.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.4",
+    "@babel/runtime": "^7.11.2",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "babel-jest": "^26.3.0",
+    "eslint": "^7.7.0",
+    "jest": "^26.4.2",
+    "metro-config": "^0.63.0",
+    "metro-react-native-babel-preset": "^0.63.0",
+    "react-test-renderer": "16.13.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
