@@ -6,21 +6,21 @@
  */
 const extraNodeModules = require('node-libs-react-native');
 const defaultAssetExts = require('metro-config/src/defaults/defaults')
-    .assetExts;
+  .assetExts;
 module.exports = {
   server: {
-    enableVisualizer: true
+    enableVisualizer: true,
   },
   resolver: {
     extraNodeModules: {
       ...extraNodeModules,
       vm: require.resolve('vm-browserify'),
     },
-    resolverMainFields: ["react-native", "main"],
+    resolverMainFields: ['react-native', 'main'],
     assetExts: [
       ...defaultAssetExts, // <- array spreading defaults
       'wasm',
-    ]
+    ],
   },
   transformer: {
     getTransformOptions: async () => ({

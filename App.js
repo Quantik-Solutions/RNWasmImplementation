@@ -16,13 +16,13 @@ import {
 } from 'react-native';
 import {Header, Colors} from 'react-native/Libraries/NewAppScreen';
 import * as nzk from '@quantik-solutions/numio-zksync';
-
+import {waitReady} from "@polkadot/util";
 const App = () => {
   const [phrase, setPhrase] = useState();
   useEffect(() => {
-    console.log(nzk);
     async function init() {
       try {
+        await waitReady();
         await nzk.crypto.waitReady();
         const pks = await nzk.crypto.privateKeyFromSeed(
           'album agent green grain slight honey east harbor early because sword elegant',
