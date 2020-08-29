@@ -8,6 +8,14 @@ target 'RNWasmImplementation' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'RNOS', :path => '../node_modules/react-native-os'
+
+  pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
+
+  pod 'TcpSockets', :path => '../node_modules/react-native-tcp'
+
+  pod 'react-native-udp', :path => '../node_modules/react-native-udp'
+
   target 'RNWasmImplementationTests' do
     inherit! :complete
     # Pods for testing

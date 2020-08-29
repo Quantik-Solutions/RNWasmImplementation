@@ -14,25 +14,38 @@ import {
   Text,
   StatusBar,
 } from 'react-native';
-import {Header, Colors} from 'react-native/Libraries/NewAppScreen';
-import * as nzk from '@quantik-solutions/numio-zksync';
-import {waitReady} from "@polkadot/util";
+import {
+  Header,
+  LearnMoreLinks,
+  Colors,
+  DebugInstructions,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
+import * as zksync from '@quantik-solutions/numio-zksync';
+import ethers from 'ethers';
+import {u8aToString} from '@polkadot/util';
+import {cryptoWaitReady} from '@polkadot/util-crypto';
+
 const App = () => {
   const [phrase, setPhrase] = useState();
   useEffect(() => {
     async function init() {
-      try {
-        await waitReady();
-        await nzk.crypto.waitReady();
-        const pks = await nzk.crypto.privateKeyFromSeed(
-          'album agent green grain slight honey east harbor early because sword elegant',
-        );
-        setPhrase(pks);
-      } catch (e) {
-        console.log(e);
-      }
+      console.log(zksync);
+      await zksync.crypto.waitReady();
+      const syncProvider = await zksync.getDefaultProvider('rinkeby');
+      const ethersProvider = new ethers.getDefaultProvider('rinkeby');
+      const ethWallet = ethers.Wallet.fromMnemonic(
+        'album agent green grain slight honey east harbor early because sword elegant',
+      ).connect(ethersProvider);
+      const syncWallet = await zksync.Wallet.fromEthSigner(
+        ethWallet,
+        syncProvider,
+      );
+      console.log({'Eth Wallet': ethWallet}, {'Sync Wallet': syncWallet});
+      console.log(ethWallet._mnemonic);
     }
     init();
+    // cryptoWaitReady().then(() => {});
   }, []);
 
   return (
@@ -43,11 +56,36 @@ const App = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <Header />
+
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>crypto.privateKeyFromSeed</Text>
-              <Text style={styles.sectionDescription}>{phrase}</Text>
+              <Text style={styles.sectionTitle}>Step One</Text>
+              <Text style={styles.sectionDescription}>
+                Edit <Text style={styles.highlight}>App.js</Text> to change this
+                screen and then come back to see your edits.
+              </Text>
             </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>
+                See Your Changes---> {phrase}
+              </Text>
+              <Text style={styles.sectionDescription}>
+                <ReloadInstructions />
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Debug</Text>
+              <Text style={styles.sectionDescription}>
+                <DebugInstructions />
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Learn More</Text>
+              <Text style={styles.sectionDescription}>
+                Read the docs to discover what to do next:
+              </Text>
+            </View>
+            <LearnMoreLinks />
           </View>
         </ScrollView>
       </SafeAreaView>
