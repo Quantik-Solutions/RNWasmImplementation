@@ -5,49 +5,197 @@
  * @format
  * @flow
  */
-import React, {Fragment, useState, useEffect} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {
   SafeAreaView,
-  StyleSheet,
   ScrollView,
-  View,
-  Text,
   StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
+import '@polkadot/util';
+// import {cryptoWaitReady} from '@polkadot/util-crypto';
 import * as zksync from '@quantik-solutions/numio-zksync';
-import ethers from 'ethers';
-import {u8aToString} from '@polkadot/util';
-import {cryptoWaitReady} from '@polkadot/util-crypto';
+import * as ethers from 'ethers';
+// import ZKAPI from '@quantik-solutions/numio-zksync-api';
 
 const App = () => {
   const [phrase, setPhrase] = useState();
   useEffect(() => {
+    // async function unlockZKAccount(syncWallet) {
+    //   if (!(await syncWallet.isSigningKeySet())) {
+    //     if ((await syncWallet.getAccountId()) == undefined) {
+    //       throw new Error('Unknwon account');
+    //     }
+    //
+    //     const changePubkey = await syncWallet.setSigningKey();
+    //
+    //     // Wait until the tx is committed
+    //     await changePubkey.awaitReceipt();
+    //   }
+    // }
+    // async function depositToken(syncWallet, to, amount, token) {
+    //   try {
+    //     if (token !== 'ETH') {
+    //       let approved = await syncWallet.isERC20DepositsApproved(token);
+    //       console.log('Approved: ', approved);
+    //       if (!approved) {
+    //         throw `${token} token transfer is not approved for this account`;
+    //       }
+    //     }
+    //     // TODO: Check if it is possible to see gas feee and then check if there is enough ether to make a deposit
+    //     let balance = await syncWallet.getEthereumBalance(token);
+    //     console.log(
+    //       `Token Balance of ${syncWallet.address()}:`,
+    //       balance.toString(),
+    //     );
+    //
+    //     if (balance.lt(amount)) {
+    //       throw `Too small ${token} balance to make a deposit.Balance:${balance.toString()}`;
+    //     }
+    //     let amountBN = ethers.BigNumber.from(amount);
+    //     let depositData = {
+    //       depositTo: to,
+    //       token: token,
+    //       amount: amountBN,
+    //     };
+    //
+    //     console.log('Deposit Data: ', depositData);
+    //     let state = await syncWallet.getAccountState();
+    //     console.log('*** Account State: ', state);
+    //
+    //     let id = await syncWallet.getAccountId();
+    //     console.log('*** Account Id: ', id);
+    //     let depositOperation = await syncWallet.depositToSyncFromEthereum(
+    //       depositData,
+    //     );
+    //     console.log(depositOperation.ethTx.hash);
+    //
+    //     await depositOperation.awaitReceipt();
+    //     if (!(await syncWallet.isSigningKeySet())) {
+    //       if ((await syncWallet.getAccountId()) == undefined) {
+    //         throw new Error('Unknwon account');
+    //       }
+    //
+    //       const changePubkey = await syncWallet.setSigningKey();
+    //
+    //       // Wait until the tx is committed
+    //       await changePubkey.awaitReceipt();
+    //     }
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // }
     async function init() {
-      console.log(zksync);
+      // try {
+      // // await cryptoWaitReady();
       await zksync.crypto.waitReady();
-      const syncProvider = await zksync.getDefaultProvider('rinkeby');
-      const ethersProvider = new ethers.getDefaultProvider('rinkeby');
+
+      const syncProvider = await zksync.getDefaultProvider('ropsten');
+      const ethersProvider = new ethers.providers.InfuraProvider.getWebSocketProvider(
+        'ropsten',
+        {
+          projectId: '5773569ebfe44b3b8c1449149797e6d5',
+        },
+      );
+      // console.log(ethersProvider);
       const ethWallet = ethers.Wallet.fromMnemonic(
-        'album agent green grain slight honey east harbor early because sword elegant',
+        'devote another tenant public call poet vacuum force arctic add start video',
       ).connect(ethersProvider);
       const syncWallet = await zksync.Wallet.fromEthSigner(
         ethWallet,
         syncProvider,
       );
-      console.log({'Eth Wallet': ethWallet}, {'Sync Wallet': syncWallet});
-      console.log(ethWallet._mnemonic);
+      await syncWallet.setSigningKey();
+
+      const ethWallet_2 = ethers.Wallet.fromMnemonic(
+        'devote apple tenant public call poet boat force arctic add start video',
+      ).connect(ethersProvider);
+      const syncWallet_2 = await zksync.Wallet.fromEthSigner(
+        ethWallet_2,
+        syncProvider,
+      );
+      //----------Deposit Token Call--------------
+
+      let amount = '2000000000000000';
+      let amountBN = ethers.BigNumber.from(amount);
+      let token = 'ETH';
+      let fee = await syncWallet.getTransferFee(syncWallet_2.address, 'ETH');
+
+      await syncWallet.syncTransfer(
+        syncWallet_2.address,
+        amountBN,
+        token,
+        fee.toString(),
+      );
+
+      // await depositToken(
+      //   syncWallet,
+      //   ethWallet.address,
+      //   packableAmount.toString(),
+      //   token,
+      // );
+      // const changePubkey = await syncWallet.setSigningKey();
+      // console.log(changePubkey);
+
+      // const opConfCountNeeded = await syncProvider.getConfirmationsForEthOpAmount();
+      // console.log('opConfCountNeeded', opConfCountNeeded);
+      // // TODO: Check if it is possible to see gas feee and then check if there is enough ether to make a deposit
+      // let balance = await syncWallet.getEthereumBalance(token);
+      // console.log(
+      //   `Token Balance of ${syncWallet.address()}:`,
+      //   balance.toString(),
+      // );
+      //
+      // let depositData = {
+      //   depositTo: syncWallet.address(),
+      //   token: token,
+      //   amount: amountBN,
+      // };
+      //
+      // console.log('Deposit Data: ', depositData);
+      // let state = await syncWallet.getAccountState();
+      // console.log('*** Account State: ', state);
+      //
+      // let id = await syncWallet.getAccountId();
+      // console.log('*** Account Id: ', id);
+      // let depositOperation = await syncWallet.depositToSyncFromEthereum(
+      //   depositData,
+      // );
+      // console.log('OpHash', depositOperation.ethTx.hash);
+      // await depositOperation.awaitReceipt();
+      //
+      // if (!(await syncWallet.isSigningKeySet())) {
+      //   if ((await syncWallet.getAccountId()) == undefined) {
+      //     throw new Error('Unknwon account');
+      //   }
+      //
+      //   const changePubkey = await syncWallet.setSigningKey();
+      //
+      //   // Wait until the tx is committed
+      //   await changePubkey.awaitReceipt();
+      // }
+      //------------------------------------------
+
+      //----------Unlock ZK Account--------------
+      // await unlockZKAccount(syncWallet);
+      // const zkBalance = await syncWallet.getBalance(token);
+      // console.log('zkBalance', zkBalance.div(ethers.constants.WeiPerEther));
+      //------------------------------------------
+
+      // setPhrase
+      // } catch (e) {
+      //   console.error('Error in Effect', e);
+      // }
+      //
+
+      // console.log({'Eth Wallet': ethWallet}, {'Sync Wallet': syncWallet});
+      // console.log(ethWallet._mnemonic);
     }
     init();
-    // cryptoWaitReady().then(() => {});
   }, []);
-
   return (
     <Fragment>
       <StatusBar barStyle="dark-content" />
@@ -56,36 +204,13 @@ const App = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <Header />
-
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
+              <Text style={styles.sectionTitle}>Result {phrase}</Text>
+              {/*<Text style={styles.sectionDescription}>*/}
+              {/*  <ReloadInstructions />*/}
+              {/*</Text>*/}
             </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>
-                See Your Changes---> {phrase}
-              </Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
           </View>
         </ScrollView>
       </SafeAreaView>

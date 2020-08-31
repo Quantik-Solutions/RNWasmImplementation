@@ -16,6 +16,7 @@ target 'RNWasmImplementation' do
 
   pod 'react-native-udp', :path => '../node_modules/react-native-udp'
 
+
   target 'RNWasmImplementationTests' do
     inherit! :complete
     # Pods for testing
