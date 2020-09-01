@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@polkadot/util": "^3.3.1",
-    "@quantik-solutions/numio-zksync": "0.0.7",
+    "@quantik-solutions/numio-zksync": "0.0.8",
     "@tradle/react-native-http": "^2.0.1",
     "browserify-zlib": "^0.1.4",
     "buffer": "^4.9.2",
