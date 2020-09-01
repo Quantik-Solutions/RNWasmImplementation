@@ -19,7 +19,6 @@ import '@polkadot/util';
 // import {cryptoWaitReady} from '@polkadot/util-crypto';
 import * as zksync from '@quantik-solutions/numio-zksync';
 import * as ethers from 'ethers';
-// import ZKAPI from '@quantik-solutions/numio-zksync-api';
 
 const App = () => {
   const [phrase, setPhrase] = useState();
@@ -91,45 +90,71 @@ const App = () => {
     async function init() {
       // try {
       // await cryptoWaitReady();
-      await zksync.crypto.waitReady();
+      await zksync.crypto.loadZkSyncCrypto();
 
-      const syncProvider = await zksync.getDefaultProvider('ropsten');
-      const ethersProvider = new ethers.providers.InfuraProvider.getWebSocketProvider(
-        'ropsten',
-        {
-          projectId: '5773569ebfe44b3b8c1449149797e6d5',
-        },
+      const syncProvider = await zksync.Provider.newHttpProvider(
+        'http://ec2-3-135-199-154.us-east-2.compute.amazonaws.com:3030',
       );
+      const ethersProvider = new ethers.providers.JsonRpcProvider(
+        'http://ec2-3-135-199-154.us-east-2.compute.amazonaws.com:8545',
+      );
+      // const ethersProvider = new ethers.providers.InfuraProvider.getWebSocketProvider(
+      //   'ropsten',
+      //   {
+      //     projectId: '5773569ebfe44b3b8c1449149797e6d5',
+      //   },
+      // );
       // console.log(ethersProvider);
-      const ethWallet = ethers.Wallet.fromMnemonic(
-        'devote another tenant public call poet vacuum force arctic add start video',
-      ).connect(ethersProvider);
-      const syncWallet = await zksync.Wallet.fromEthSigner(
-        ethWallet,
+      // const ethWallet = ethers.Wallet.fromMnemonic(
+      //   'devote another tenant public call poet vacuum force arctic add start video',
+      // ).connect(ethersProvider);
+      console.log(syncProvider);
+
+      var account = ethers.Wallet.fromMnemonic(
+        'fine music test violin matrix prize squirrel panther purchase material script deal',
+        "m/44'/60'/0'/0/1",
+      );
+      // var keystore = await account.encrypt('testpassword');
+      let ethersWallet = account.connect(ethersProvider);
+      let zkWallet = await zksync.Wallet.fromEthSigner(
+        ethersWallet,
         syncProvider,
       );
-      await syncWallet.setSigningKey();
 
-      const ethWallet_2 = ethers.Wallet.fromMnemonic(
-        'devote apple tenant public call poet boat force arctic add start video',
-      ).connect(ethersProvider);
-      const syncWallet_2 = await zksync.Wallet.fromEthSigner(
-        ethWallet_2,
-        syncProvider,
-      );
-      //----------Deposit Token Call--------------
+      console.log('zkWallet', zkWallet);
 
-      let amount = '2000000000000000';
-      let amountBN = ethers.BigNumber.from(amount);
-      let token = 'ETH';
-      let fee = await syncWallet.getTransferFee(syncWallet_2.address, 'ETH');
+      const opConfCountNeeded = await syncProvider.getConfirmationsForEthOpAmount();
+      console.log('opConfCountNeeded', opConfCountNeeded);
 
-      await syncWallet.syncTransfer(
-        syncWallet_2.address,
-        amountBN,
-        token,
-        fee.toString(),
-      );
+      let state = await zkWallet.getAccountState();
+      console.log('*** Account State: ', state);
+
+      let id = await zkWallet.getAccountId();
+      console.log('*** Account Id: ', id);
+
+      // const ethWallet_2 = ethers.Wallet.fromMnemonic(
+      //   'devote apple tenant public call poet boat force arctic add start video',
+      // ).connect(ethersProvider);
+      // console.log('ethWallet2 Made');
+      //
+      // const syncWallet_2 = await zksync.Wallet.fromEthSigner(
+      //   ethWallet_2,
+      //   syncProvider,
+      // );
+      // console.log('syncWallet2 Made');
+      //
+      // //----------Deposit Token Call--------------
+      // let amount = '2000000000000000';
+      // let amountBN = ethers.BigNumber.from(amount);
+      // let token = 'ETH';
+      // let fee = await syncWallet.getTransferFee(syncWallet_2.address, 'ETH');
+      // console.log(fee.toNumber());
+      // await syncWallet.syncTransfer(
+      //   syncWallet_2.address,
+      //   amountBN,
+      //   token,
+      //   fee.toString(),
+      // );
 
       // await depositToken(
       //   syncWallet,
