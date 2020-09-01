@@ -199,7 +199,7 @@ const App = () => {
 "dependencies": {
     "@polkadot/util": "^3.3.1",
     "@polkadot/util-crypto": "^3.3.1",
-    "@quantik-solutions/numio-zksync": "0.0.3",
+    "@quantik-solutions/numio-zksync": "0.0.6",
     "@quantik-solutions/numio-zksync-api": "0.0.8",
     "@tradle/react-native-http": "^2.0.1",
     "base-64": "^0.1.0",

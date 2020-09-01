@@ -90,7 +90,7 @@ const App = () => {
     // }
     async function init() {
       // try {
-      // // await cryptoWaitReady();
+      // await cryptoWaitReady();
       await zksync.crypto.waitReady();
 
       const syncProvider = await zksync.getDefaultProvider('ropsten');

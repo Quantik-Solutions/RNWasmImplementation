@@ -17,6 +17,8 @@ target 'RNWasmImplementation' do
   pod 'react-native-udp', :path => '../node_modules/react-native-udp'
 
 
+  pod 'get-random-values-polypony', :path => '../node_modules/get-random-values-polypony'
+
   target 'RNWasmImplementationTests' do
     inherit! :complete
     # Pods for testing

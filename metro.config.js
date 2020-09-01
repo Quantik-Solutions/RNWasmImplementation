@@ -9,7 +9,6 @@ const defaultAssetExts = require('metro-config/src/defaults/defaults')
   .assetExts;
 module.exports = {
   server: {
-    enableVisualizer: true,
   },
   resolver: {
     extraNodeModules: {
